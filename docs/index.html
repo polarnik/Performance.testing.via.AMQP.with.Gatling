@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<title>Тестирование производительности по протоколу AMQP с Gatling</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+	<link rel="stylesheet" href="shower/themes/material/styles/styles.css">
+	<link rel="stylesheet" href="styles/style.css">
+
+    <style>
+        .shower {
+            --slide-ratio: calc(16 / 9);
+            --slide-width: 1280px;
+            --color-key: #ffcc00;
+            --color-yellow: #ffcc00;
+        }
+    </style>	
+</head>
+<body class="shower list">
+
+	<header class="caption">
+		<h1>Тестирование производительности по протоколу AMQP с Gatling</h1>
+		<p><a href="https://polarnik.github.io">Вячеслав Смирнов</a>, <a href="https://www.raiffeisen.ru/">Райффайзенбанк</a></p>
+	</header>
+
+	<section class="clear slide" id="title"><div>
+		<h2>Тестирование<br>производительности<br>по протоколу <b>AMQP</b><br>с <b>Gatling</b></h2>
+		<p>Вячеслав Смирнов</p>
+		<p>Эксперт по тестированию,<br>Райффайзенбанк</p>
+		<img class="w cover" src="images/hb-bg.png">
+		<img class="w h cover" src="images/hb-bg.2.png">
+		<style>
+			#title h2 {
+				position: relative;
+				top: calc(var(--slide-height) / 10);
+				left: calc(var(--slide-width) / 4);
+				font-size: calc(var(--slide-height) / 12);
+			}
+			#title p {
+				position: relative;
+				top: 150px;
+				left: calc(var(--slide-width) / 4);
+				font-size: calc(var(--slide-height) / 20);
+				line-height: calc(var(--slide-height) / 15);
+			}
+			#title div div {
+				width: 250px;
+				height: 250px;
+				position: relative;
+				top: -120px;
+				left: 575px;
+				background: #A6CE38;
+				background: red;
+				border-radius: 50%;
+				white-space: nowrap;
+				text-align: center;
+			}
+			#title div div span {
+				display: inline-block;
+				height: 100%;
+				vertical-align: middle;
+			}
+			#title div div img {
+				z-index: auto;
+				vertical-align: middle;
+				position: static;
+			}
+		</style>
+	</div></section>
+
+	<section class="clear slide"><div>
+		<h2>Ускоряю сервисы <br>Raiffeisen Business Platform</h2>
+		<figure>
+			<img class="w cover" src="images/foto.jpg">
+		</figure>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Доклад о тестировании производительности</h2>
+		<h3>Из опыта 2018-2019 г. тестирования микросервисов:</h3>
+		<ul>
+			<li>асинхронных</li>
+			<li>принимающих запросы через <mark class="green">RabbitMQ</mark></li>
+			<li>отвечающих также через <mark class="green">RabbitMQ</mark></li>
+		</ul>
+		
+		<h3>Пригодится:</h3>
+		<ul>
+			<li>инженерам по тестированию производительности</li>
+			<li>разработчикам асинхронных сервисов</li>
+		</ul>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Особенно пригодится</h2>
+		<h3>При совпадении стека технологий</h3>
+		<ul>
+			<li>Linux</li>
+			<li>Scala</li>
+			<li>Alpakka</li>
+			<li><mark class="green">RabbitMQ</mark></li>
+			<li>PostgreSQL</li>
+			<li><mark>Gatling</mark></li>
+		</ul>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Решенные технические проблемы</h2>
+		<h3>Созданные проблемы, которые пришлось решить:</h3>
+		<ul>
+			<li>Как написать Gatling-плагин для AMQP?</li>
+			<li>Как написать Gatling-сценарий с минимальным потреблением ОЗУ?</li>
+			<li>Как логировать асинхронные операции?</li>
+			<li>Как отлаживать работу с RabbitMQ?</li>
+		</ul>
+		<h3 class="next"><mark>Код прилагается</mark></h3>
+	</div></section>
+
+	<section class="clear yellow slide"><div>
+		<h2 class="small shout">Чем подавать нагрузку на <b>RabbitMQ</b> в 2019 году?<br/>
+			<span class="next">Может быть <b>Apache.JMeter</b> 5.1+?</span><br/>
+			<span class="next">Может быть <b>Gatling</b> 3.0+?</span>
+		</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Подача нагрузки на <b>RabbitMQ</b></h2>
+		<h3>С помощью <mark>Apache.JMeter</mark></h3>
+		<a href="https://github.com/jlavallee/JMeter-Rabbit-AMQP">https://github.com/jlavallee/JMeter-Rabbit-AMQP</a> (<mark>105 звезд</mark>)
+		<table>
+			<tr>
+				<th>Last commit</th>
+				<td>2016-05-17</td>
+				<td>три года назад</td>
+			</tr>
+			<tr>
+				<th>JMeter</th>
+				<td>2.11</td>
+				<td><a href="https://github.com/apache/jmeter/releases/tag/v2_11">2014</a>, работает в 5.1</td>
+			</tr>
+			<tr>
+				<th>Amqp</th>
+				<td>3.5.1</td>
+				<td><a href="https://github.com/rabbitmq/rabbitmq-java-client/releases/tag/rabbitmq_v3_5_1">2015</a>, обновляется до 4.11</td>
+			</tr>
+			<tr>
+				<th>Issues</th>
+				<td>21</td>
+				<td><a href="https://github.com/jlavallee/JMeter-Rabbit-AMQP/issues?q=is%3Aissue+is%3Aclosed">2015</a>, критично heardbeat</td>
+			</tr>
+			<tr>
+				<th>Pull Requests</th>
+				<td>9</td>
+				<td><a href="https://github.com/jlavallee/JMeter-Rabbit-AMQP/pulls?q=is%3Apr+is%3Aclosed">2017</a>, удобно maven</td>
+			</tr>
+			<tr>
+				<th>Fork</th>
+				<td>109</td>
+				<td>много, много неактивных</td>
+			</tr>
+		</table>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Подача нагрузки на <b>RabbitMQ</b></h2>
+		<h3>С помощью <mark>Apache.JMeter</mark></h3>
+		<a href="https://github.com/polarnik/JMeter-Rabbit-AMQP-info">https://github.com/polarnik/JMeter-Rabbit-AMQP-info</a> (<mark>TOP 11 Forks</mark>)
+		<figure>
+			<img class="place bottom center"
+				style="height:55%; margin: 20px 0px 50px 0"
+				src="images/jmeter-amqp-plugin-info.png">
+		</figure>			
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Подача нагрузки на <b>RabbitMQ</b></h2>
+		<h3>С помощью <mark>Gatling</mark></h3>
+		<a href="https://github.com/maiha/gatling-amqp">https://github.com/maiha/gatling-amqp</a> (<mark>14 звезд</mark>)
+		<table>
+			<tr>
+				<th>Last commit</th>
+				<td>2016-09-02</td>
+				<td>три года назад</td>
+			</tr>
+			<tr>
+				<th>Gatling</th>
+				<td>2.2.0-M3</td>
+				<td><a href="https://github.com/gatling/gatling/tree/v2.2.0-M3">2015</a>, не работает в 3.0+</td>
+			</tr>
+			<tr>
+				<th>Amqp</th>
+				<td>4.9.0</td>
+				<td><a href="https://github.com/rabbitmq/rabbitmq-java-client/releases/tag/rabbitmq_v3_5_3">2015</a>, обновляется до 4.11</td>
+			</tr>
+			<tr>
+				<th>Issues</th>
+				<td>2</td>
+				<td><a href="https://github.com/maiha/gatling-amqp/issues?q=is%3Aissue+is%3Aclosed">2018</a>, критично gatling-2.2.2</td>
+			</tr>
+			<tr>
+				<th>Pull Requests</th>
+				<td>2</td>
+				<td><a href="https://github.com/jlavallee/JMeter-Rabbit-AMQP/pulls?q=is%3Apr+is%3Aclosed">2018</a></td>
+			</tr>
+			<tr>
+				<th>Fork</th>
+				<td>25</td>
+				<td>три активных, для gatling-2</td>
+			</tr>
+		</table>
+	</div></section>
+
+	<section class="clear green slide"><div>
+		<h2 class="small shout">Подача нагрузки на <b>RabbitMQ</b><br/>
+			<span class="next">Для <b>Apache.JMeter</b> нужно немного правок</span><br>
+			<span class="next">Для <b>Gatling 3+</b> нужно было больше правок</span><br></h2>
+	</div></section>
+
+	<section class="clear slide"><div>
+		<figure>
+			<img class="w cover" src="images/Vasnetsov_1.jpg">
+			<figcaption class="copyright right white">
+				© <a href="https://ru.wikipedia.org/wiki/%D0%92%D0%B8%D1%82%D1%8F%D0%B7%D1%8C_%D0%BD%D0%B0_%D1%80%D0%B0%D1%81%D0%BF%D1%83%D1%82%D1%8C%D0%B5">«Витязь на распутье» — картина Виктора Васнецова (Википедия)</a>
+			</figcaption>
+		</figure>
+	</div></section>	
+
+	<section class="clear green slide"><div>
+		<h2 class="small shout">Варианты подачи нагрузки на <b>RabbitMQ</b>:<br/>
+			<ul>
+			<li class="next">продолжать использовать <b>Apache.JMeter</b></li>
+			<li class="next">попробовать использовать <b>Gatling 2.1</b></li>
+			<li class="next">подождать коллег, и использовать <b>Gatling</b> 3.0</li>
+			<li class="next"><mark>доделать свой плагин для <b>Gatling</b> 3.0</mark></li>
+		</ul>
+		</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Отправить AMQP-запрос без Gatling-плагина</h2>
+		<pre>
+			<code>def send(): Unit = {</code>
+			<code>  val factory = new ConnectionFactory()     // <mark>подключение</mark></code>
+			<code>  factory.setUsername("guest")              // <mark>подключение</mark></code>
+			<code>  val conn = factory.newConnection()        // <mark>подключение</mark></code>
+			<code>  val channel = conn.createChannel()        // <mark>подключение</mark></code>
+			<code>  val bytes = message.getBytes()</code>
+			<code>  channel.basicPublish("exchange","routing.key",null,bytes)</code>
+			<code>  channel.close()                           // <mark>отключение</mark></code>
+			<code>  conn.close()                              // <mark>отключение</mark></code>
+			<code>}</code>			
+		</pre>
+		<a href="https://gist.github.com/polarnik/10dce91e372ed74ba7038250125f26a6">https://gist.github.com/polarnik / AmqpGatlingSimulation.scala</a> (<mark>v 3.1.2</mark>)
+	</div></section>
+
+
+
+	<section class="slide"><div>
+		<h2>Отправить AMQP-запрос без Gatling-плагина</h2>
+		<pre>
+			<code>.group("Transaction Name") {</code>
+			<code>  exec {</code>
+			<code>    session => </code>
+			<code>      val factory = new ConnectionFactory() // <mark>подключение</mark></code>
+			<code>      factory.setUsername("guest")          // <mark>подключение</mark></code>
+			<code>      ...                                   // <mark>подключение</mark></code>
+
+			<code>      channel.basicPublish("exchange","routing.key",null,bytes)</code>
+
+			<code>      channel.close()                       // <mark>отключение</mark></code>
+			<code>      conn.close()                          // <mark>отключение</mark></code>
+			<code>    session.set("variableName", variableValue)  </code>                        
+			<code>  }</code>                      
+			<code>}</code>			
+		</pre>
+	</div></section>
+
+	<section class="clear yellow slide"><div>
+		<h2 class="small shout">Задачи плагина для <b>RabbitMQ</b>:<br/>
+			<ul>
+			<li>DSL-синтаксис</li>
+			<li>пул соединений</li>
+			<li>создание/удаление очередей</li>
+			<li>отправка и получение единичных сообщений</li>
+			<li>ожидание появления сообщений</li>
+			<li>корреляция и проверки</li>
+			<li>логирование и статистика</li>
+			<li>...</li>
+		</ul>
+		</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Подходящая основа для AMQP-плагина</h2>
+		<h3>Для <mark>Gatling</mark> 3.0+</h3>
+		<table>
+			<tr>
+				<th>JDBC-plugin (2.2)</th>
+				<td>есть документация</td>
+			</tr>
+			<tr>
+				<th>JMS-плагин (latest)</th>
+				<td>базовый, работа с очередями</td>
+			</tr>
+			<tr>
+				<th>AMQP-плагин (2.1)</th>
+				<td>старый, не сработал</td>
+			</tr>
+			<tr>
+				<th>JMeter-плагины</th>
+				<td>наглядность, сработали</td>
+			</tr>
+		</table>			
+	</div></section>
+
+	<section class="clear green slide"><div>
+		<h2 class="small shout">Разработанный <b>AMQP-plugin</b>:<br/>
+			<ul>
+				<li>TODO: <b>ссылка на опубликованный проект</b></li>
+				<li>TODO: <b>ссылка на документацию</b></li>
+			</ul>
+		</h2>
+	</div></section>
+
+
+
+	<section class="clear slide"><div>
+		<figure>
+			<img class="w cover" src="images/arch.jpeg">
+		</figure>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Архитектура взаимодействия</h2>
+		<h3>Две очереди и CorrelationID</h3>
+		<figure>
+			<img class="place bottom center"
+				style="height:55%; margin: 20px 0px 50px 0"
+				src="images/correlation.id.1.png">
+		</figure>				
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Архитектура взаимодействия</h2>
+		<h3>Две очереди и CorrelationID => <mark>Ожидания</mark></h3>
+		<figure>
+			<img class="place bottom center"
+				style="height:55%; margin: 20px 0px 50px 0"
+				src="images/correlation.id.2.png">
+		</figure>				
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Архитектура взаимодействия</h2>
+		<h3>Две очереди и CorrelationID => <mark>Ожидания и OutOfMemory</mark></h3>
+		<figure>
+			<img class="place bottom center"
+				style="height:55%; margin: 20px 0px 50px 0"
+				src="images/correlation.id.3.png">
+		</figure>				
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Архитектура взаимодействия</h2>
+		<h3>Сокращение параллельности и времени ожидания</h3>
+			<ul>
+				<li>RPC: replay-to</li>
+				<li>TTL: expiration, x-expires</li>
+				<li>Length Limit: x-max-length, x-max-length-bytes</li>
+			</ul>			
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Архитектура взаимодействия</h2>
+		<h3>Разделить отправку и получение</h3>
+		<figure>
+			<img class="place bottom center"
+				style="height:55%; margin: 20px 0px 50px 0"
+				src="images/correlation.id.4.png">
+		</figure>				
+	</div></section>
+
+
+	<section class="clear green slide"><div>
+		<h2 class="small shout">
+		Вариант реализации
+		<ol>
+			<li>Использование before для очистки очередей</li>
+			<li>Разные scenario на отправку и получение</li>
+			<li>Извлечение CorrelationID из тела ответа</li>
+			<li>Синхронизация работы через ConcurentHashMap</li>
+			<li>Плагин для логирования транзакций</li>
+			<li>Отдельный scenario на отмену запросов</li>
+			<li>Использование after для очистки очередей</li>
+		</ol>
+	</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Внутренний механизм корреляции сообщений</h2>
+		<h3>Есть разные варианты реализации</h3>
+			<ul>
+				<li>callback-функцию, как в JMS-плагине</li>
+				<li>корреляция через session, check, wait и общий ConcurentHashMap</li>
+				<li>реализовать механизм корреляции прямо в Gatling-плагине</li>
+			</ul>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Внутренний механизм корреляции сообщений</h2>
+		<h3>callback-функция, как в JMS-плагине</h3>
+			<ul>
+				<li>принимает тело ответа, возвращает CorrelationID</li>
+				<li>предусмотрено для варианта с двумя очередями</li>
+				<li>не предусмотрено для варианта с тремя очередями</li>
+				<li>внутри использует синхронизацию через ConcurentHashMap</li>
+			</ul>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Внутренний механизм корреляции сообщений</h2>
+		<h3>Корреляция через session, check, wait и ConcurentHashMap</h3>
+			<ul>
+				<li>предусмотрено для варианта с тремя и более очередями</li>
+				<li>можно создавать заглушки прямо в тесте</li>
+				<li>максимальная гибкость</li>
+				<li>сложность отладки</li>
+			</ul>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Внутренний механизм корреляции сообщений</h2>
+		<h3>Механизм корреляции прямо в AMQP-плагине</h3>
+			<ul>
+				<li>удобно, если владеть кодом плагина</li>
+				<li>удобно, если плагин можно расширять</li>
+				<li>максимальное удобство</li>
+				<li>простота отладки</li>
+			</ul>
+	</div></section>
+
+	<section class="clear yellow slide"><div>
+		<h2 class="small shout">
+		Группировка запросов в Gatling
+		<ol>
+			<li>возможности</li>
+			<li>особенности</li>
+			<li>ограничения</li>
+			<li>решения</li>
+		</ol>
+	</h2>
+	</div></section>
+
+
+	<section class="clear green slide"><div>
+		<h2 class="small shout">Пример проекта<br>
+			<a href="https://github.com/polarnik/...">https://github.com/polarnik/... (TODO)</a>
+		</h2>
+	</div></section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	<section class="clear slide" id="contacts"><div>
+		<h3>Вячеслав Смирнов</h3>
+		<p><a href="https://github.com/polarnik">github.com/polarnik</a></p>
+		<p>Telegram: @qa_load</p>
+		<div><span></span><h2>Спасибо!</h2></div>
+		<img class="cover w" src="images/raiff-cover.png">
+		<style>
+			#contacts h3 {
+				position: relative;
+				top: calc(var(--slide-height) / 2.7);
+				left: calc(var(--slide-width) / 12);
+				font-size: calc(var(--slide-height) / 15);
+				padding: 0px 0 0 0;
+				margin: 40px 0 0 0;
+			}			
+			#contacts h2 {
+				position: relative;
+				top: calc(var(--slide-height) / 2.7);
+				left: calc(var(--slide-width) / 12);
+				font-size: calc(var(--slide-height) / 15);
+			}
+			#contacts p {
+				position: relative;
+				top: calc(var(--slide-height) / 2.7);
+				left: calc(var(--slide-width) / 12);
+				font-size: calc(var(--slide-height) / 15);
+
+			}
+			#contacts div div {
+				width: calc(var(--slide-width) / 4);
+				height: calc(var(--slide-width) / 4);
+				position: absolute;
+				top: calc(var(--slide-height) / 4);
+				left: calc(var(--slide-width) * (8/9 - 1/4));
+				background: #ffed00;
+				border-radius: 50%;
+				white-space: nowrap;
+				text-align: center;
+				vertical-align: middle;
+			}
+			#contacts div div span {
+				display: inline-block;
+				height: 90%;
+				vertical-align: middle;
+			}
+			#contacts div div h2 {
+				z-index: auto;
+				vertical-align: middle;
+				position: static;
+				display: inline-block;
+				margin-bottom: 0;
+				color: #000;
+			}
+		</style>
+	</div></section>
+
+	<div class="progress"></div>
+
+	<script src="shower/shower.min.js"></script>
+</body>
+</html>
