@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.2.1">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="jms.server.emulator" enabled="true">
+      <stringProp name="TestPlan.comments"></stringProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+        <collectionProp name="Arguments.arguments">
+          <elementProp name="initialContextFactory" elementType="Argument">
+            <stringProp name="Argument.name">initialContextFactory</stringProp>
+            <stringProp name="Argument.value">com.sun.jndi.fscontext.RefFSContextFactory</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="providerURL" elementType="Argument">
+            <stringProp name="Argument.name">providerURL</stringProp>
+            <stringProp name="Argument.value">${__P(JMS_provider,)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="queueConnectionFactory" elementType="Argument">
+            <stringProp name="Argument.name">queueConnectionFactory</stringProp>
+            <stringProp name="Argument.value">QM1</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="queueNameIn" elementType="Argument">
+            <stringProp name="Argument.name">queueNameIn</stringProp>
+            <stringProp name="Argument.value">DEV.QUEUE.1</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="queueNameOut" elementType="Argument">
+            <stringProp name="Argument.name">queueNameOut</stringProp>
+            <stringProp name="Argument.value">DEV.QUEUE.2</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="readTimeOut" elementType="Argument">
+            <stringProp name="Argument.name">readTimeOut</stringProp>
+            <stringProp name="Argument.value">10000</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="user" elementType="Argument">
+            <stringProp name="Argument.name">user</stringProp>
+            <stringProp name="Argument.value">app</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="duration" elementType="Argument">
+            <stringProp name="Argument.name">duration</stringProp>
+            <stringProp name="Argument.value">${__P(duration,300000)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="graphiteHost" elementType="Argument">
+            <stringProp name="Argument.name">graphiteHost</stringProp>
+            <stringProp name="Argument.value">${__P(graphiteHost,localhost)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="graphitePort" elementType="Argument">
+            <stringProp name="Argument.name">graphitePort</stringProp>
+            <stringProp name="Argument.value">${__P(graphitePort,2004)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+        </collectionProp>
+      </elementProp>
+      <stringProp name="TestPlan.user_define_classpath"></stringProp>
+      <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
+    </TestPlan>
+    <hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Thread Group" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">startnextloop</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <intProp name="LoopController.loops">-1</intProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">2</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">1</stringProp>
+        <boolProp name="ThreadGroup.scheduler">true</boolProp>
+        <stringProp name="ThreadGroup.duration">${duration}</stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+      </ThreadGroup>
+      <hashTree>
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="TC: Subscriber, Publisher" enabled="true">
+          <boolProp name="TransactionController.includeTimers">false</boolProp>
+          <boolProp name="TransactionController.parent">false</boolProp>
+        </TransactionController>
+        <hashTree>
+          <SubscriberSampler guiclass="JMSSubscriberGui" testclass="SubscriberSampler" testname="JMS Subscriber: ${queueNameIn}" enabled="true">
+            <stringProp name="jms.jndi_properties">false</stringProp>
+            <stringProp name="jms.initial_context_factory">${initialContextFactory}</stringProp>
+            <stringProp name="jms.provider_url">${providerURL}</stringProp>
+            <stringProp name="jms.connection_factory">${queueConnectionFactory}</stringProp>
+            <stringProp name="jms.topic">${queueNameIn}</stringProp>
+            <stringProp name="jms.security_principle">${user}</stringProp>
+            <stringProp name="jms.security_credentials"></stringProp>
+            <boolProp name="jms.authenticate">true</boolProp>
+            <stringProp name="jms.iterations">1</stringProp>
+            <stringProp name="jms.read_response">true</stringProp>
+            <stringProp name="jms.client_choice">jms_subscriber_receive</stringProp>
+            <stringProp name="jms_error_reconnect_on_codes"></stringProp>
+            <stringProp name="jms.timeout">${readTimeOut}</stringProp>
+            <boolProp name="jms.stop_between_samples">true</boolProp>
+            <boolProp name="jms.destination_static">false</boolProp>
+          </SubscriberSampler>
+          <hashTree>
+            <RegexExtractor guiclass="RegexExtractorGui" testclass="RegexExtractor" testname="Regular Expression Extractor: jms_body" enabled="true">
+              <stringProp name="RegexExtractor.useHeaders">false</stringProp>
+              <stringProp name="RegexExtractor.refname">jms_body</stringProp>
+              <stringProp name="RegexExtractor.regex">&lt;input&gt;(.*)&lt;/input&gt;</stringProp>
+              <stringProp name="RegexExtractor.template">$1$</stringProp>
+              <stringProp name="RegexExtractor.default">__NONE__</stringProp>
+              <stringProp name="RegexExtractor.match_number"></stringProp>
+            </RegexExtractor>
+            <hashTree/>
+            <RegexExtractor guiclass="RegexExtractorGui" testclass="RegexExtractor" testname="Regular Expression Extractor: JMSCorrelationId" enabled="true">
+              <stringProp name="RegexExtractor.useHeaders">true</stringProp>
+              <stringProp name="RegexExtractor.refname">JMSCorrelationId</stringProp>
+              <stringProp name="RegexExtractor.regex">JMSCorrelationId (.*)</stringProp>
+              <stringProp name="RegexExtractor.template">$1$</stringProp>
+              <stringProp name="RegexExtractor.default"></stringProp>
+              <stringProp name="RegexExtractor.match_number">1</stringProp>
+              <boolProp name="RegexExtractor.default_empty_value">true</boolProp>
+            </RegexExtractor>
+            <hashTree/>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion: jms_body" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="-1214813960">__NONE__</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+              <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">20</intProp>
+              <stringProp name="Assertion.scope">variable</stringProp>
+              <stringProp name="Scope.variable">jms_body</stringProp>
+            </ResponseAssertion>
+            <hashTree/>
+          </hashTree>
+          <PublisherSampler guiclass="JMSPublisherGui" testclass="PublisherSampler" testname="JMS Publisher: ${queueNameOut}" enabled="true">
+            <stringProp name="jms.jndi_properties">false</stringProp>
+            <stringProp name="jms.initial_context_factory">${initialContextFactory}</stringProp>
+            <stringProp name="jms.provider_url">${providerURL}</stringProp>
+            <stringProp name="jms.connection_factory">${queueConnectionFactory}</stringProp>
+            <stringProp name="jms.topic">${queueNameOut}</stringProp>
+            <stringProp name="jms.expiration">100000</stringProp>
+            <stringProp name="jms_error_reconnect_on_codes"></stringProp>
+            <stringProp name="jms.priority"></stringProp>
+            <stringProp name="jms.security_principle">${user}</stringProp>
+            <stringProp name="jms.security_credentials"></stringProp>
+            <stringProp name="jms.text_message">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;output&gt;${jms_body}&lt;/output&gt;</stringProp>
+            <stringProp name="jms.input_file"></stringProp>
+            <stringProp name="jms.random_path"></stringProp>
+            <stringProp name="jms.config_choice">jms_use_text</stringProp>
+            <stringProp name="jms.config_msg_type">jms_text_message</stringProp>
+            <stringProp name="jms.iterations">1</stringProp>
+            <boolProp name="jms.authenticate">true</boolProp>
+            <elementProp name="jms.jmsProperties" elementType="JMSProperties">
+              <collectionProp name="JMSProperties.properties">
+                <elementProp name="" elementType="JMSProperty">
+                  <stringProp name="JMSProperty.name">JMSCorrelationId</stringProp>
+                  <stringProp name="JMSProperty.value">${JMSCorrelationId}</stringProp>
+                  <stringProp name="JMSProperty.type">java.lang.String</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+            <boolProp name="jms.destination_static">false</boolProp>
+          </PublisherSampler>
+          <hashTree/>
+        </hashTree>
+      </hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Thread Group" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">startnextloop</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <intProp name="LoopController.loops">-1</intProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">2</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">1</stringProp>
+        <boolProp name="ThreadGroup.scheduler">true</boolProp>
+        <stringProp name="ThreadGroup.duration">${duration}</stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+      </ThreadGroup>
+      <hashTree>
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="TC: point-to-point" enabled="true">
+          <boolProp name="TransactionController.includeTimers">false</boolProp>
+          <boolProp name="TransactionController.parent">false</boolProp>
+        </TransactionController>
+        <hashTree>
+          <JMSSampler guiclass="JMSSamplerGui" testclass="JMSSampler" testname="JMS Point-to-Point: read ${queueNameIn}" enabled="true">
+            <stringProp name="JMSSampler.queueconnectionfactory">${queueConnectionFactory}</stringProp>
+            <stringProp name="JMSSampler.SendQueue">${queueNameIn}</stringProp>
+            <stringProp name="JMSSampler.ReceiveQueue"></stringProp>
+            <intProp name="JMSSampler.communicationStyle">2</intProp>
+            <boolProp name="JMSSampler.isNonPersistent">false</boolProp>
+            <boolProp name="JMSSampler.useReqMsgIdAsCorrelId">false</boolProp>
+            <stringProp name="JMSSampler.timeout">${readTimeOut}</stringProp>
+            <stringProp name="JMSSampler.jmsNumberOfSamplesToAggregate"></stringProp>
+            <stringProp name="HTTPSamper.xml_data"></stringProp>
+            <stringProp name="JMSSampler.initialContextFactory">${initialContextFactory}</stringProp>
+            <stringProp name="JMSSampler.contextProviderUrl">${providerURL}</stringProp>
+            <elementProp name="JMSSampler.jndiProperties" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+              <collectionProp name="Arguments.arguments"/>
+            </elementProp>
+            <elementProp name="arguments" elementType="JMSProperties">
+              <collectionProp name="JMSProperties.properties">
+                <elementProp name="" elementType="JMSProperty">
+                  <stringProp name="JMSProperty.name">JMSCorrelationId</stringProp>
+                  <stringProp name="JMSProperty.value"></stringProp>
+                  <stringProp name="JMSProperty.type">java.lang.String</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+          </JMSSampler>
+          <hashTree>
+            <RegexExtractor guiclass="RegexExtractorGui" testclass="RegexExtractor" testname="Regular Expression Extractor: jms_body" enabled="true">
+              <stringProp name="RegexExtractor.useHeaders">false</stringProp>
+              <stringProp name="RegexExtractor.refname">jms_body</stringProp>
+              <stringProp name="RegexExtractor.regex">&lt;input&gt;(.*)&lt;/input&gt;</stringProp>
+              <stringProp name="RegexExtractor.template">$1$</stringProp>
+              <stringProp name="RegexExtractor.default">__NONE__</stringProp>
+              <stringProp name="RegexExtractor.match_number"></stringProp>
+            </RegexExtractor>
+            <hashTree/>
+            <RegexExtractor guiclass="RegexExtractorGui" testclass="RegexExtractor" testname="Regular Expression Extractor: JMSCorrelationId" enabled="true">
+              <stringProp name="RegexExtractor.useHeaders">true</stringProp>
+              <stringProp name="RegexExtractor.refname">JMSCorrelationId</stringProp>
+              <stringProp name="RegexExtractor.regex">JMSCorrelationId (.*)</stringProp>
+              <stringProp name="RegexExtractor.template">$1$</stringProp>
+              <stringProp name="RegexExtractor.default"></stringProp>
+              <stringProp name="RegexExtractor.match_number">1</stringProp>
+              <boolProp name="RegexExtractor.default_empty_value">true</boolProp>
+            </RegexExtractor>
+            <hashTree/>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion: jms_body" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="-1214813960">__NONE__</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+              <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">20</intProp>
+              <stringProp name="Assertion.scope">variable</stringProp>
+              <stringProp name="Scope.variable">jms_body</stringProp>
+            </ResponseAssertion>
+            <hashTree/>
+          </hashTree>
+          <JMSSampler guiclass="JMSSamplerGui" testclass="JMSSampler" testname="JMS Point-to-Point: send request ${queueNameOut}" enabled="true">
+            <stringProp name="JMSSampler.queueconnectionfactory">${queueConnectionFactory}</stringProp>
+            <stringProp name="JMSSampler.SendQueue">${queueNameOut}</stringProp>
+            <stringProp name="JMSSampler.ReceiveQueue"></stringProp>
+            <intProp name="JMSSampler.communicationStyle">0</intProp>
+            <boolProp name="JMSSampler.isNonPersistent">false</boolProp>
+            <boolProp name="JMSSampler.useReqMsgIdAsCorrelId">false</boolProp>
+            <stringProp name="JMSSampler.timeout"></stringProp>
+            <stringProp name="JMSSampler.jmsNumberOfSamplesToAggregate"></stringProp>
+            <stringProp name="HTTPSamper.xml_data">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;output&gt;${jms_body}&lt;/output&gt;</stringProp>
+            <stringProp name="JMSSampler.initialContextFactory">${initialContextFactory}</stringProp>
+            <stringProp name="JMSSampler.contextProviderUrl">${providerURL}</stringProp>
+            <elementProp name="JMSSampler.jndiProperties" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+              <collectionProp name="Arguments.arguments"/>
+            </elementProp>
+            <elementProp name="arguments" elementType="JMSProperties">
+              <collectionProp name="JMSProperties.properties">
+                <elementProp name="" elementType="JMSProperty">
+                  <stringProp name="JMSProperty.name">JMSCorrelationId</stringProp>
+                  <stringProp name="JMSProperty.value">${JMSCorrelationId}</stringProp>
+                  <stringProp name="JMSProperty.type">java.lang.String</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+            <stringProp name="JMSSampler.expiration">100000</stringProp>
+          </JMSSampler>
+          <hashTree/>
+        </hashTree>
+      </hashTree>
+      <BackendListener guiclass="BackendListenerGui" testclass="BackendListener" testname="Backend Listener" enabled="true">
+        <elementProp name="arguments" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" enabled="true">
+          <collectionProp name="Arguments.arguments">
+            <elementProp name="graphiteMetricsSender" elementType="Argument">
+              <stringProp name="Argument.name">graphiteMetricsSender</stringProp>
+              <stringProp name="Argument.value">org.apache.jmeter.visualizers.backend.graphite.TextGraphiteMetricsSender</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="graphiteHost" elementType="Argument">
+              <stringProp name="Argument.name">graphiteHost</stringProp>
+              <stringProp name="Argument.value">${graphiteHost}</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="graphitePort" elementType="Argument">
+              <stringProp name="Argument.name">graphitePort</stringProp>
+              <stringProp name="Argument.value">${graphitePort}</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="rootMetricsPrefix" elementType="Argument">
+              <stringProp name="Argument.name">rootMetricsPrefix</stringProp>
+              <stringProp name="Argument.value">jmeter.</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="summaryOnly" elementType="Argument">
+              <stringProp name="Argument.name">summaryOnly</stringProp>
+              <stringProp name="Argument.value">false</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="samplersList" elementType="Argument">
+              <stringProp name="Argument.name">samplersList</stringProp>
+              <stringProp name="Argument.value">.*</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="useRegexpForSamplersList" elementType="Argument">
+              <stringProp name="Argument.name">useRegexpForSamplersList</stringProp>
+              <stringProp name="Argument.value">true</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="percentiles" elementType="Argument">
+              <stringProp name="Argument.name">percentiles</stringProp>
+              <stringProp name="Argument.value">50;75;90;95;99</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+          </collectionProp>
+        </elementProp>
+        <stringProp name="classname">org.apache.jmeter.visualizers.backend.graphite.GraphiteBackendListenerClient</stringProp>
+      </BackendListener>
+      <hashTree/>
+      <ResultCollector guiclass="StatVisualizer" testclass="ResultCollector" testname="Aggregate Report" enabled="true">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <objProp>
+          <name>saveConfig</name>
+          <value class="SampleSaveConfiguration">
+            <time>true</time>
+            <latency>true</latency>
+            <timestamp>true</timestamp>
+            <success>true</success>
+            <label>true</label>
+            <code>true</code>
+            <message>true</message>
+            <threadName>true</threadName>
+            <dataType>true</dataType>
+            <encoding>false</encoding>
+            <assertions>true</assertions>
+            <subresults>true</subresults>
+            <responseData>false</responseData>
+            <samplerData>false</samplerData>
+            <xml>false</xml>
+            <fieldNames>true</fieldNames>
+            <responseHeaders>false</responseHeaders>
+            <requestHeaders>false</requestHeaders>
+            <responseDataOnError>false</responseDataOnError>
+            <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+            <assertionsResultsToSave>0</assertionsResultsToSave>
+            <bytes>true</bytes>
+            <sentBytes>true</sentBytes>
+            <url>true</url>
+            <threadCounts>true</threadCounts>
+            <idleTime>true</idleTime>
+            <connectTime>true</connectTime>
+          </value>
+        </objProp>
+        <stringProp name="filename"></stringProp>
+      </ResultCollector>
+      <hashTree/>
+      <ResultCollector guiclass="TableVisualizer" testclass="ResultCollector" testname="View Results in Table" enabled="true">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <objProp>
+          <name>saveConfig</name>
+          <value class="SampleSaveConfiguration">
+            <time>true</time>
+            <latency>true</latency>
+            <timestamp>true</timestamp>
+            <success>true</success>
+            <label>true</label>
+            <code>true</code>
+            <message>true</message>
+            <threadName>true</threadName>
+            <dataType>true</dataType>
+            <encoding>false</encoding>
+            <assertions>true</assertions>
+            <subresults>true</subresults>
+            <responseData>false</responseData>
+            <samplerData>false</samplerData>
+            <xml>false</xml>
+            <fieldNames>true</fieldNames>
+            <responseHeaders>false</responseHeaders>
+            <requestHeaders>false</requestHeaders>
+            <responseDataOnError>false</responseDataOnError>
+            <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+            <assertionsResultsToSave>0</assertionsResultsToSave>
+            <bytes>true</bytes>
+            <sentBytes>true</sentBytes>
+            <url>true</url>
+            <threadCounts>true</threadCounts>
+            <idleTime>true</idleTime>
+            <connectTime>true</connectTime>
+          </value>
+        </objProp>
+        <stringProp name="filename"></stringProp>
+      </ResultCollector>
+      <hashTree/>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>

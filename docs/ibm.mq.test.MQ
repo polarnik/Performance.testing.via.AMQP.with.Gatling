@@ -1,0 +1,52 @@
+Запуск примера с IBM.MQ
+
+https://github.com/ibm-messaging/mq-container/blob/master/docs/usage.md
+
+docker run \ 
+  --env LICENSE=accept \
+  --env MQ_QMGR_NAME=QM1 \
+  --publish 1414:1414 \
+  --publish 9443:9443 \
+  --detach \
+  ibmcom/mq
+
+ или
+
+ docker run \
+  --env LICENSE=accept \
+  --env MQ_QMGR_NAME=QM1 \
+  --env MQ_ENABLE_METRICS=true \
+  --publish 1414:1414 \
+  --publish 9443:9443 \
+  --publish 9157:9157 \
+  --detach \
+  ibmcom/mq
+
+
+https://github.com/ibm-messaging/mq-container/blob/master/docs/developer-config.md
+
+Будет доступна админка:
+
+https://127.0.0.1:9443/ibmmq/console/
+admin/passw0rd
+
+The following users are created:
+
+User admin for administration (in the mqm group). Default password is passw0rd.
+User app for messaging (in a group called mqclient). No password by default.
+Users in mqclient group have been given access connect to all queues and topics starting with DEV.** and have put, get, pub, sub, browse and inq permissions.
+
+The following queues and topics are created:
+
+DEV.QUEUE.1
+DEV.QUEUE.2
+DEV.QUEUE.3
+DEV.DEAD.LETTER.QUEUE - configured as the Queue Manager's Dead Letter Queue.
+DEV.BASE.TOPIC - uses a topic string of dev/.
+Two channels are created, one for administration, the other for normal messaging:
+
+DEV.ADMIN.SVRCONN - configured to only allow the admin user to connect into it. A user and password must be supplied.
+DEV.APP.SVRCONN - does not allow administrative users to connect. Password is optional unless you choose a password for app users.
+A new listener is created (the SYSTEM listener is fine, but system objects are not shown by default in the web console):
+
+DEV.LISTENER.TCP - listens on port 1414.

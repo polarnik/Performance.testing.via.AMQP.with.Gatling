@@ -1,0 +1,459 @@
+﻿<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>io.github.qaload</groupId>
+    <artifactId>jms.amqp.loadtest</artifactId>
+    <version>0.0.1</version>
+
+    <description>Асинхронные тесты производительности</description>
+    <developers>
+        <developer>
+            <id>polarnik</id>
+            <name>SMIRNOV Vyacheslav</name>
+            <email>owasp@yandex.ru</email>
+            <url>https://github.com/polarnik</url>
+        </developer>
+    </developers>
+
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- https://mvnrepository.com/artifact/io.gatling.highcharts/gatling-charts-highcharts -->
+        <gatling-plugin.version>3.0.4</gatling-plugin.version>
+        <gatling.version>3.3.0</gatling.version>
+        <maven-jar-plugin.version>3.1.2</maven-jar-plugin.version>
+        <scala-maven-plugin.version>4.2.4</scala-maven-plugin.version>
+
+        <ibm.version>9.1.3.0</ibm.version>
+        <jndi.version>1.2</jndi.version>
+
+        <jmeter.maven.plugin.version>3.0.0</jmeter.maven.plugin.version>
+        <jmeter.version>5.2.1</jmeter.version>
+
+        <!-- Название теста -->
+        <performancetest.script></performancetest.script>
+	    <simulationClass>io.github.qaload.simulations.TestJmsDsl</simulationClass>
+
+        <performancetest.Xmx>400</performancetest.Xmx>
+
+        <performancetest.influxdb.url>http://localhost:8086</performancetest.influxdb.url>
+        <performancetest.influxdb.db>jmeter</performancetest.influxdb.db>
+
+        <JMS_provider>file:${basedir}/src/test/resources/JNDI.FsContext/</JMS_provider>
+
+    </properties>
+
+    <profiles>
+        <profile>
+            <id>jms</id>
+            <properties>
+                <!-- Название теста -->
+                <performancetest.script>jms</performancetest.script>
+                <simulationClass></simulationClass>                
+            </properties>
+        </profile>        
+        <profile>
+            <id>test1</id>
+            <properties>
+                <!-- Название теста -->
+                <performancetest.script>jms.server.emulator</performancetest.script>
+                <simulationClass></simulationClass>                
+            </properties>
+        </profile>
+        <profile>
+            <id>zoom</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.lazerycode.jmeter</groupId>
+                        <artifactId>jmeter-maven-plugin</artifactId>
+                        <version>${jmeter.maven.plugin.version}</version>
+                        <configuration>
+                            <propertiesJMeter>
+                                <jmeter.hidpi.mode>true</jmeter.hidpi.mode>
+                                <jmeter.hidpi.scale.factor>2.0</jmeter.hidpi.scale.factor>
+                                <jmeter.toolbar.icons.size>32x32</jmeter.toolbar.icons.size>
+                                <jmeter.tree.icons.size>24x24</jmeter.tree.icons.size>
+                                <jsyntaxtextarea.font.family>Hack</jsyntaxtextarea.font.family>
+                                <jsyntaxtextarea.font.size>24</jsyntaxtextarea.font.size>
+                            </propertiesJMeter>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>zoom2</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.lazerycode.jmeter</groupId>
+                        <artifactId>jmeter-maven-plugin</artifactId>
+                        <configuration>
+                            <propertiesJMeter>
+                                <jmeter.hidpi.mode>true</jmeter.hidpi.mode>
+                                <jmeter.hidpi.scale.factor>3.0</jmeter.hidpi.scale.factor>
+                                <jmeter.toolbar.icons.size>48x48</jmeter.toolbar.icons.size>
+                                <jmeter.tree.icons.size>48x48</jmeter.tree.icons.size>
+                                <jsyntaxtextarea.font.family>Hack</jsyntaxtextarea.font.family>
+                                <jsyntaxtextarea.font.size>48</jsyntaxtextarea.font.size>
+                            </propertiesJMeter>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.gatling.highcharts</groupId>
+            <artifactId>gatling-charts-highcharts</artifactId>
+            <version>${gatling.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+
+        <dependency>
+            <groupId>com.ibm.mq</groupId>
+            <artifactId>allclient</artifactId>
+            <version>${ibm.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.ibm.mq</groupId>
+            <artifactId>commonservices</artifactId>
+            <version>${ibm.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.jms</groupId>
+            <artifactId>javax.jms-api</artifactId>
+            <version>2.0</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <testSourceDirectory>src/test/scala</testSourceDirectory>
+        <plugins>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>${maven-jar-plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>net.alchim31.maven</groupId>
+                <artifactId>scala-maven-plugin</artifactId>
+                <version>${scala-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                        <configuration>
+                            <jvmArgs>
+                                <jvmArg>-Xss100M</jvmArg>
+                            </jvmArgs>
+                            <args>
+                                <arg>-target:jvm-1.8</arg>
+                                <arg>-deprecation</arg>
+                                <arg>-feature</arg>
+                                <arg>-unchecked</arg>
+                                <arg>-language:implicitConversions</arg>
+                                <arg>-language:postfixOps</arg>
+                            </args>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>io.gatling</groupId>
+                <artifactId>gatling-maven-plugin</artifactId>
+                <version>${gatling-plugin.version}</version>
+
+                <configuration>
+                    <!--<configFolder>${project.basedir}/src/test/resources</configFolder>-->
+
+                    <!-- Use this folder as the folder where feeders are stored. -->
+                    <!--<resourcesFolder>${project.basedir}/src/test/resources</resourcesFolder>-->
+
+
+                    <!--<dataFolder>${project.basedir}/src/test/resources/data</dataFolder>-->
+
+
+                    <!-- Use this folder as the folder where results are stored. -->
+                    <!--<resultsFolder>${project.basedir}/target/gatling/results</resultsFolder>-->
+
+                    <!-- <bodiesFolder>${project.basedir}/src/test/resources/bodies</bodiesFolder>-->
+
+                    <!--<runDescription>This-is-the-run-description</runDescription>-->
+
+                    <!-- Run simulation but does not generate reports. By default false. -->
+                    <!--<noReports>false</noReports>-->
+
+                    <!-- Generate the reports for the simulation in this folder. -->
+                    <!-- <reportsOnly>directoryName</reportsOnly> -->
+
+                    <!-- A name of a Simulation class to run. -->
+                    <simulationClass>${simulationClass}</simulationClass>
+
+                    <!-- Extra JVM arguments to pass when running Gatling. -->
+                    <jvmArgs>
+                        <jvmArg>-Djava.net.preferIPv4Stack=true</jvmArg>
+                        <jvmArg>-Djava.net.preferIPv6Addresses=false</jvmArg>
+                        <jvmArg>-Dfile.encoding=UTF-8</jvmArg>
+                        <jvmArg>-Xms200m</jvmArg>
+                        <jvmArg>-Xmx${performancetest.Xmx}m</jvmArg>
+                        <jvmArg>-XX:ThreadStackSize=5000</jvmArg>
+                        <jvmArg>-XX:VMThreadStackSize=5000</jvmArg>
+                        <jvmArg>-XX:NativeMemoryTracking=detail</jvmArg>
+
+                        <jvmArg>-XX:+UnlockCommercialFeatures</jvmArg>
+                        <jvmArg>-XX:+FlightRecorder</jvmArg>
+                        <jvmArg>-XX:+PrintClassHistogram</jvmArg>
+                        <jvmArg>-Dhttps.protocols=TLSv1.2</jvmArg>
+                        <jvmArg>-Djdk.tls.client.protocols=TLSv1.2</jvmArg>
+                        <jvmArg>-Djsse.enableSNIExtension=false</jvmArg>
+                        <jvmArg>-Dcom.sun.management.jmxremote.ssl=false</jvmArg>
+                        <jvmArg>-Dcom.sun.management.jmxremote.authenticate=false</jvmArg>
+                        <jvmArg>-Dcom.sun.management.jmxremote.port=9222</jvmArg>
+                        <jvmArg>-Dcom.sun.management.jmxremote.rmi.port=9222</jvmArg>
+                        <jvmArg>-Dcom.sun.management.jmxremote.local.only=true</jvmArg>
+                    </jvmArgs>
+
+                    <!--
+                    Will cause the project build to look successful, rather than fail, even
+                    if there are Gatling test failures. This can be useful on a continuous
+                    integration server, if your only option to be able to collect output
+                    files, is if the project builds successfully.
+                    -->
+                    <!--<failOnError>true</failOnError>-->
+
+                    <!--
+                    Continue execution of simulations despite assertion failure. If you have
+                    some stack of simulations and you want to get results from all simulations
+                    despite some assertion failures in previous one.
+                    -->
+                    <!--<continueOnAssertionFailure>false</continueOnAssertionFailure>-->
+
+                    <!--    <fork>true</fork> -->
+                    <!-- Propagate System properties to forked processes. -->
+                    <!-- <propagateSystemProperties>true</propagateSystemProperties> -->
+
+
+                    <!-- Force the name of the directory generated for the results of the run -->
+                    <!-- <outputName>outputDirectoryBaseName</outputName> -->
+                    <!--
+                    -->
+
+                    <runMultipleSimulations>false</runMultipleSimulations>
+
+                    <!--
+                    <includes>
+                        <param>rbo.ob.service.load.TestJmsDsl</param>
+                    </includes>
+                    -->
+                </configuration>
+
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>com.lazerycode.jmeter</groupId>
+                <artifactId>jmeter-maven-plugin</artifactId>
+                <version>${jmeter.maven.plugin.version}</version>
+                <executions>
+
+                    <!-- Csonfigure JMeter tests -->
+                    <execution>
+                        <id>configuration</id>
+                        <goals>
+                            <goal>configure</goal>
+                        </goals>
+                    </execution>
+
+                    <!-- Run JMeter tests -->
+                    <execution>
+                        <id>jmeter-tests</id>
+                        <goals>
+                            <goal>jmeter</goal>
+                        </goals>
+                    </execution>
+
+                    <!-- Fail build on errors in test -->
+                    <execution>
+                        <id>jmeter-check-results</id>
+                        <goals>
+                            <goal>results</goal>
+                        </goals>
+                    </execution>
+                </executions>
+
+                <configuration>
+                    <testFilesIncluded>
+                        <jMeterTestFile>${performancetest.script}.jmx</jMeterTestFile>
+                    </testFilesIncluded>
+                    <guiTestFile>src/test/jmeter/${performancetest.script}.jmx</guiTestFile>
+                    <jmeterVersion>${jmeter.version}</jmeterVersion>
+                    <jmeterExtensions>
+                        <!-- Custom Thread Groups
+                        https://mvnrepository.com/artifact/kg.apc/jmeter-plugins-casutg
+                        -->
+                        <artifact>kg.apc:jmeter-plugins-casutg:2.9</artifact>
+
+
+                        <artifact>com.zeroclue:jmeter.amqp:1.0</artifact>
+
+                        <!-- Test Plan Check Tool
+                        https://mvnrepository.com/artifact/kg.apc/jmeter-plugins-plancheck
+                        <artifact>kg.apc:jmeter-plugins-plancheck:2.4</artifact>
+                        -->
+                    </jmeterExtensions>
+
+                    <!-- The plugin uses some broken dependencies
+                    An alternative is to set this to true and use excludedArtifacts, see below
+                    -->
+                    <downloadExtensionDependencies>false</downloadExtensionDependencies>
+                    <downloadOptionalDependencies>false</downloadOptionalDependencies>
+                    <downloadLibraryDependencies>false</downloadLibraryDependencies>
+                    <downloadJMeterDependencies>true</downloadJMeterDependencies>
+
+                    <testPlanLibraries>
+
+                        <!-- JMS API
+                        https://mvnrepository.com/artifact/javax.jms/javax.jms-api
+                        jms.jar (57 кБайт) - файл из каталога C:\Program Files\ibm\MQ\java\lib\
+                        -->
+                        <artifact>javax.jms:javax.jms-api:2.0</artifact>
+
+
+                        <artifact>com.sun.jndi:providerutil:${jndi.version}</artifact>
+                        <artifact>com.sun.jndi:fscontext:${jndi.version}</artifact>
+                        <artifact>com.ibm.mq:allclient:${ibm.version}</artifact>
+                        <artifact>com.ibm.mq:mqjms:${ibm.version}</artifact>
+
+
+                        <!-- Зависимость для: kg.apc:jmeter-plugins-casutg:2.9 -->
+                        <artifact>kg.apc:jmeter-plugins-cmn-jmeter:0.6</artifact>
+
+                        <!-- Плагин SharedMap (нет зависимостей) -->
+                        <artifact>io.github.qaload:SharedHashMap:0.1.1</artifact>
+
+                        <artifact>org.influxdb:influxdb-java:2.15</artifact>
+
+                        <!-- зависимости для org.influxdb:influxdb-java:2.15 -->
+                        <artifact>com.squareup.okhttp3:okhttp:3.13.1</artifact>
+                        <artifact>com.squareup.okhttp3:logging-interceptor:3.13.1</artifact>
+                        <artifact>com.squareup.retrofit2:retrofit:2.5.0</artifact>
+                        <artifact>com.squareup.retrofit2:converter-moshi:2.5.0</artifact>
+                        <artifact>org.msgpack:msgpack-core:0.8.16</artifact>
+                        <artifact>com.squareup.okio:okio:1.17.2</artifact>
+                        <artifact>com.squareup.moshi:moshi:1.8.0</artifact>
+
+                        <artifact>com.rabbitmq:amqp-client:4.8.3</artifact>
+                    </testPlanLibraries>
+
+
+                    <!-- Configuring the jvm that the jmeter process runs in
+                    https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/wiki/Configuring-the-jvm-that-the-jmeter-process-runs-in
+                    http://reins.altervista.org/java/A_Collection_of_JVM_Options_MP.html
+                    https://www.oracle.com/technetwork/java/javase/tech/vmoptions-jsp-140102.html
+                    -->
+                    <jMeterProcessJVMSettings>
+                        <xms>300</xms>
+                        <xmx>${performancetest.Xmx}</xmx>
+                        <arguments>
+                            <argument>-XX:MaxMetaspaceSize=256m</argument>
+
+                            <argument>-XX:+UseG1GC</argument>
+                            <argument>-XX:MaxGCPauseMillis=100</argument>
+                            <argument>-XX:G1ReservePercent=20</argument>
+
+                            <argument>-Duser.language=en</argument>
+                            <argument>-Duser.region=EN</argument>
+
+                            <argument>-Dfile.encoding=UTF-8</argument>
+
+                            <argument>-XX:-HeapDumpOnOutOfMemoryError</argument>
+                            <argument>-Djava.security.egd=file:/dev/urandom</argument>
+                            <argument>-server</argument>
+
+                            <!-- Uncomment this if you run JMeter in DOCKER (need Java SE 8u131 or JDK 9)
+                            https://blogs.oracle.com/java-platform-group/java-se-support-for-docker-cpu-and-memory-limits
+                            <argument>-XX:+UnlockExperimentalVMOptions</argument>
+                            <argument>-XX:+UseCGroupMemoryLimitForHeap</argument>
+                            -->
+                        </arguments>
+                    </jMeterProcessJVMSettings>
+
+
+                    <testResultsTimestamp>true</testResultsTimestamp>
+                    <appendResultsTimestamp>true</appendResultsTimestamp>
+                    <resultsFileNameDateFormat>yyyy-MM-dd_HH-mm-ss</resultsFileNameDateFormat>
+                    <overrideRootLogLevel>INFO</overrideRootLogLevel>
+                    <suppressJMeterOutput>false</suppressJMeterOutput>
+                    <ignoreResultFailures>true</ignoreResultFailures>
+
+                    <guiTestFile>${project.basedir}/src/test/jmeter/${performancetest.script}.jmx</guiTestFile>
+                    <!-- Set the directory that JMeter reports are saved to -->
+                    <reportDirectory>${project.build.directory}/jmeter/reports</reportDirectory>
+                    <!-- Workaround on error version 2.8.6 https://github.com/jmeter-maven-plugin/jmeter-maven-plugin/issues/323 
+                    <reportDirectory>${project.build.directory}/jmeter/reports/${performancetest.script}-${maven.build.timestamp}</reportDirectory>
+		    -->
+
+                    <resultsFileFormat>csv</resultsFileFormat>
+                    <generateReports>true</generateReports>
+
+
+                    <!-- Set the directory that JMeter results are saved to -->
+                    <resultsDirectory>${project.build.directory}/jmeter/results</resultsDirectory>
+                    <propertiesJMeter>
+                        <jmeter.save.saveservice.thread_counts>true</jmeter.save.saveservice.thread_counts>
+                        <sample_variables>JMSCorrelationId</sample_variables>
+                        <!-- # Отключение отправки статистики на сайт https://jmeter-plugins.org/stats/ -->
+                        <jpgc.repo.sendstats>false</jpgc.repo.sendstats>
+                        <!-- CSV Output : Enable logging of sub results -->
+                        <jmeter.save.saveservice.subresults>true</jmeter.save.saveservice.subresults>
+                    </propertiesJMeter>
+
+                    <propertiesUser>
+                        <JMS_provider>${JMS_provider}</JMS_provider>
+                        <dataFolder>${project.basedir}/src/test/resources/data</dataFolder>
+
+                        <!-- Каталог для сохранения XML-логов по ошибкам -->
+                        <reportFolder>${project.build.directory}/jmeter/results</reportFolder>
+
+                        <jsr223>${project.basedir}/src/test/jmeter/jsr223</jsr223>
+                    </propertiesUser>
+
+                    <propertiesReportGenerator>
+                        <jmeter.reportgenerator.overall_granularity>5000</jmeter.reportgenerator.overall_granularity>
+                        <jmeter.reportgenerator.graph.responseTimeDistribution.property.set_granularity>5000</jmeter.reportgenerator.graph.responseTimeDistribution.property.set_granularity>
+                    </propertiesReportGenerator>
+
+                    <scanResultsForFailedRequests>true</scanResultsForFailedRequests>
+                    <scanResultsForSuccessfulRequests>true</scanResultsForSuccessfulRequests>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+</project>

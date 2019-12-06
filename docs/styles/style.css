@@ -1,6 +1,6 @@
 .shower {
 	/* font-size: calc(var(--slide-height) / 25); */
-	font-size: calc(var(--slide-height) / 22);
+	font-size: calc(var(--slide-height) / 20);
 }
 
 @font-face {
@@ -20,6 +20,12 @@
 .slide h2 {
 	/*font-family: 'Suisse', sans-serif;*/
 	font-weight: normal;
+	font-size: calc(var(--slide-height) / 12);
+	line-height: 1.2;
+}
+.slide h3 {
+	/*font-family: 'Suisse', sans-serif;*/
+	font-weight: bold;
 	font-size: calc(var(--slide-height) / 15);
 	line-height: 1.2;
 }

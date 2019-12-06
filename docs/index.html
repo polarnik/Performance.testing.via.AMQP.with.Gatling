@@ -70,51 +70,210 @@
 	</div></section>
 
 	<section class="clear slide"><div>
-		<h2>Ускоряю сервисы <br>Raiffeisen Business Platform</h2>
+		<h2>Ускоряю сервисы <b>
+			<br><mark>Raiffeisen</mark>
+			<br><mark>Business</mark>
+			<br><mark>Platform</mark></b>
+			<br>
+			<br><mark class="green">Развиваю <b>@qa_load</b></mark>
+		</h2>
 		<figure>
 			<img class="w cover" src="images/foto.jpg">
 		</figure>
 	</div></section>
 
 	<section class="slide"><div>
-		<h2>Доклад о тестировании производительности</h2>
-		<h3>Из опыта 2018-2019 г. тестирования микросервисов:</h3>
+		<h2>Raiffeisen Business Platform</h2>
+		<h3>глазами инженера по производительности</h3>
 		<ul>
-			<li>асинхронных</li>
-			<li>принимающих запросы через <mark class="green">RabbitMQ</mark></li>
-			<li>отвечающих также через <mark class="green">RabbitMQ</mark></li>
-		</ul>
-		
-		<h3>Пригодится:</h3>
-		<ul>
-			<li>инженерам по тестированию производительности</li>
-			<li>разработчикам асинхронных сервисов</li>
-		</ul>
-	</div></section>
-
-	<section class="slide"><div>
-		<h2>Особенно пригодится</h2>
-		<h3>При совпадении стека технологий</h3>
-		<ul>
-			<li>Linux</li>
-			<li>Scala</li>
-			<li>Alpakka</li>
-			<li><mark class="green">RabbitMQ</mark></li>
+			<li><mark class="green">Linux</mark>, Windows</li>
+			<li><mark class="green">Scala</mark>, Java, Groovy</li>
+			<li><mark class="green">AMQP</mark> и RabbitMQ</li>
+			<li>JMS и IBM.MQ</li>
 			<li>PostgreSQL</li>
-			<li><mark>Gatling</mark></li>
+			<li><mark>Gatling</mark> и Apache.JMeter</li>
 		</ul>
 	</div></section>
 
 	<section class="slide"><div>
-		<h2>Решенные технические проблемы</h2>
-		<h3>Созданные проблемы, которые пришлось решить:</h3>
+		<h2>Доклад на основе</h2>
+		<h3>опыта 2018-2019 гг. тестирования</h3>
 		<ul>
-			<li>Как написать Gatling-плагин для AMQP?</li>
-			<li>Как написать Gatling-сценарий с минимальным потреблением ОЗУ?</li>
-			<li>Как логировать асинхронные операции?</li>
-			<li>Как отлаживать работу с RabbitMQ?</li>
+			<li>асинхронных микросервисов</li>
+			<li>c <mark class="green">AMQP</mark> и RabbitMQ</li>
+			<li>c <mark>Gatling</mark> и не только</li>
+		</ul>
+	</div></section>
+
+	<section class="clear yellow slide"><div>
+		<h2 class="small shout"><b>Очень много</b> потоков
+			<br>нужно, чтобы подать нагрузку
+			<br>по протоколам JMS или <b>AMQP</b>
+			<br>из <b>Gatling</b>
+			<br><b>Десятки тысяч</b>!
+
+		</h2>
+	</div></section>	
+
+	<section class="slide"><div>
+		<h2>Содержание</h2>
+		<ul>
+			<li>Очереди</li>
+			<li>Подача нагрузки по AMQP</li>
+			<li>RequestReply-подход в Gatling</li>
+			<li>SharedHashMap-подход в Gatling</li>
+			<li>Транзакции (группы) в Gatling</li>
+			<li>Асинхронная статистика в Gatling</li>
 		</ul>
 		<h3 class="next"><mark>Код прилагается</mark></h3>
+	</div></section>
+	
+
+	<section class="slide"><div>
+		<h2>Очереди</h2>
+		<h3><mark>Ответ придёт нескоро</mark><mark class="next">или не придёт</mark></h3>
+				<ul>
+			<li>Отложенные вычисления</li>
+			<li>Асинхронная обработка</li>
+			<li>Очередь как паттерн</li>
+			<li>Очереди и шквал запросов</li>
+			<li>Очереди и надёжность узлов</li>
+			<li>Очереди и дублирование сообщений</li>
+		</ul>
+		<a href="https://xakep.ru/issues/xa/165/"><b>Школа Highload</b>. Урок № 4. Масштабирование во времени</a>
+		<p>(Хакер № 163, 2012 год, стр. 108-112)</p>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Очереди</h2>
+		<h3>Отложенные вычисления</h3>
+		<figure>
+			<img class="place bottom center"
+				style="height:55%; margin: 20px 0px 50px 0"
+				src="images/Mail-Page-00.png">
+		</figure>
+		<figure class="next">
+			<img class="place bottom center"
+				style="height:55%; margin: 20px 0px 50px 0"
+				src="images/Mail-Page-01.png">
+		</figure>
+		<figure class="next">
+			<img class="place bottom center"
+				style="height:55%; margin: 20px 0px 50px 0"
+				src="images/Mail-Page-1.png">
+		</figure>
+		<figure class="next">
+			<img class="place bottom center"
+				style="height:55%; margin: 20px 0px 50px 0"
+				src="images/Mail-Page-2.png">
+		</figure>
+		<figure class="next">
+			<img class="place bottom center"
+				style="height:55%; margin: 20px 0px 50px 0"
+				src="images/Mail-Page-3.png">
+		</figure>
+		<figure class="next">
+			<img class="place bottom center"
+				style="height:55%; margin: 20px 0px 50px 0"
+				src="images/Mail-Page-4.png">
+		</figure>
+		<figure class="next">
+			<img class="place bottom center"
+				style="height:55%; margin: 20px 0px 50px 0"
+				src="images/Mail-Page-5.png">
+		</figure>
+		<figure class="next">
+			<img class="place bottom center"
+				style="height:55%; margin: 20px 0px 50px 0"
+				src="images/Mail-Page-6.png">
+		</figure>
+		<figure class="next">
+			<img class="place bottom center"
+				style="height:55%; margin: 20px 0px 50px 0"
+				src="images/Mail-Page-7.png">
+		</figure>
+		<figure class="next">
+			<img class="place bottom center"
+				style="height:55%; margin: 20px 0px 50px 0"
+				src="images/Mail-Page-8.png">
+		</figure>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Очереди</h2>
+		<h3>Асинхронная обработка (отложенная)</h3>
+		Собрать данные сейчас, а обработать потом:
+		<ul>
+			<li>Пересчитать статистику</li>
+			<li>Обновить индексы в базе данных</li>
+			<li>Сформировать банковские выписки</li>
+		</ul>		
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Очередь как паттерн</h2>
+		<h3>Очередь может быть в БД, но лучше в MQ</h3>
+		<figure>
+			<img class="place center"
+				style="width: 90%"
+				src="images/q.pattern.png">
+		</figure>		
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Очереди и множество запросов</h2>
+		<h3>Шина: ответы на запросы в другой системе</h3>
+		<figure>
+			<img class="place bottom center"
+				style="max-height:65%; margin: 20px 0px 70px 0; max-width: 90%"
+				src="images/send.png">
+		</figure>		
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Очереди и проверка на дубликаты</h2>
+		<h3>На 10 запросов может быть 1 ответ</h3>
+		<figure>
+			<img class="place center"
+				style="width: 90%"
+				src="images/double.check.pnd">
+		</figure>		
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Очереди и надёжность узлов</h2>
+		<h3>Шина данных защищает от потерь</h3>
+		<figure>
+			<img class="place center"
+				style="width: 90%"
+				src="images/stable-1.png">
+		</figure>	
+		<figure class="next">
+			<img class="place center"
+				style="width: 90%"
+				src="images/stable-2.png">
+		</figure>
+		<figure class="next">
+			<img class="place center"
+				style="width: 90%"
+				src="images/stable-3.png">
+		</figure>			
+	</div></section>
+
+
+
+	<section class="slide"><div>
+		<h2>Очереди, RabbitMQ, AMQP</h2>
+		Ответы могут:
+		<ul>
+			<li>формироваться долго</li>
+			<li>формироваться по расписанию</li>
+			<li>быть доступны по другому протоколу</li>
+			<li>соотвествовать нескольким запросам-дублям</li>
+
+		</ul>
+		<p class="next">И ответы не должны теряться</p>
+		<p class="next"><mark>Инструмент для нагрузки должен быть гибким</mark></p>
 	</div></section>
 
 	<section class="clear yellow slide"><div>
@@ -125,9 +284,8 @@
 	</div></section>
 
 	<section class="slide"><div>
-		<h2>Подача нагрузки на <b>RabbitMQ</b></h2>
-		<h3>С помощью <mark>Apache.JMeter</mark></h3>
-		<a href="https://github.com/jlavallee/JMeter-Rabbit-AMQP">https://github.com/jlavallee/JMeter-Rabbit-AMQP</a> (<mark>105 звезд</mark>)
+		<h2><mark>Apache.JMeter</mark> для <b>RabbitMQ</b> в 2019</h2>
+		<a href="https://github.com/jlavallee/JMeter-Rabbit-AMQP">github.com/jlavallee/JMeter-Rabbit-AMQP</a> (<mark>105 ★</mark>)
 		<table>
 			<tr>
 				<th>Last commit</th>
@@ -157,15 +315,14 @@
 			<tr>
 				<th>Fork</th>
 				<td>109</td>
-				<td>много, много неактивных</td>
+				<td>много, но активных 11</td>
 			</tr>
 		</table>
 	</div></section>
 
 	<section class="slide"><div>
-		<h2>Подача нагрузки на <b>RabbitMQ</b></h2>
-		<h3>С помощью <mark>Apache.JMeter</mark></h3>
-		<a href="https://github.com/polarnik/JMeter-Rabbit-AMQP-info">https://github.com/polarnik/JMeter-Rabbit-AMQP-info</a> (<mark>TOP 11 Forks</mark>)
+		<h2><mark>Apache.JMeter</mark> для <b>RabbitMQ</b> в 2019</h2>
+		<a href="https://github.com/polarnik/JMeter-Rabbit-AMQP-info">github.com/polarnik/JMeter-Rabbit-AMQP-info</a> (<mark>TOP 11 Forks</mark>)
 		<figure>
 			<img class="place bottom center"
 				style="height:55%; margin: 20px 0px 50px 0"
@@ -174,9 +331,8 @@
 	</div></section>
 
 	<section class="slide"><div>
-		<h2>Подача нагрузки на <b>RabbitMQ</b></h2>
-		<h3>С помощью <mark>Gatling</mark></h3>
-		<a href="https://github.com/maiha/gatling-amqp">https://github.com/maiha/gatling-amqp</a> (<mark>14 звезд</mark>)
+		<h2><mark>Gatling</mark> для <b>RabbitMQ</b> в начале 2019</h2>
+		<a href="https://github.com/maiha/gatling-amqp">github.com/maiha/gatling-amqp</a> (<mark>14 ★</mark>)
 		<table>
 			<tr>
 				<th>Last commit</th>
@@ -211,6 +367,44 @@
 		</table>
 	</div></section>
 
+
+	<section class="slide"><div>
+		<h2><mark>Gatling</mark> для <b>RabbitMQ</b> в конце 2019</h2>
+		<a href="https://github.com/TinkoffCreditSystems/gatling-amqp-plugin">github.com/TinkoffCreditSystems/gatling-amqp-plugin</a> (<mark>14 ★</mark>)
+		<table>
+			<tr>
+				<th>Last commit</th>
+				<td>2019-10-06</td>
+				<td>недавно</td>
+			</tr>
+			<tr>
+				<th>Gatling</th>
+				<td>3.2.0</td>
+				<td><a href="https://github.com/gatling/gatling">2019</a>, работает в 3.0+</td>
+			</tr>
+			<tr>
+				<th>Amqp</th>
+				<td>5.7.1</td>
+				<td><a href="https://github.com/rabbitmq/rabbitmq-java-client/releases/tag/v5.7.1">2019</a>, новый</td>
+			</tr>
+			<tr>
+				<th>Issues</th>
+				<td>2</td>
+				<td><a href="https://github.com/TinkoffCreditSystems/gatling-amqp-plugin/issues">2019</a>, нет Consume</td>
+			</tr>
+			<tr>
+				<th>Pull Requests</th>
+				<td>1</td>
+				<td><a href="https://github.com/TinkoffCreditSystems/gatling-amqp-plugin/pulls?q=is%3Apr+is%3Aclosed">2019</a>, развивается</td>
+			</tr>
+			<tr>
+				<th>Fork</th>
+				<td>5</td>
+				<td>один активный</td>
+			</tr>
+		</table>
+	</div></section>
+
 	<section class="clear green slide"><div>
 		<h2 class="small shout">Подача нагрузки на <b>RabbitMQ</b><br/>
 			<span class="next">Для <b>Apache.JMeter</b> нужно немного правок</span><br>
@@ -238,39 +432,56 @@
 	</div></section>
 
 	<section class="slide"><div>
-		<h2>Отправить AMQP-запрос без Gatling-плагина</h2>
+		<h2><a href="https://gist.github.com/polarnik/10dce91e372ed74ba7038250125f26a6">Отправить</a> AMQP-запрос без Gatling</h2>
 		<pre>
 			<code>def send(): Unit = {</code>
-			<code>  val factory = new ConnectionFactory()     // <mark>подключение</mark></code>
-			<code>  factory.setUsername("guest")              // <mark>подключение</mark></code>
-			<code>  val conn = factory.newConnection()        // <mark>подключение</mark></code>
-			<code>  val channel = conn.createChannel()        // <mark>подключение</mark></code>
+			<code>  val factory = new ConnectionFactory()  // <mark class="green">open</mark></code>
+			<code>  factory.setUsername("guest")           // <mark class="green">open</mark></code>
+			<code>  val conn = factory.newConnection()     // <mark class="green">open</mark></code>
+			<code>  val channel = conn.createChannel()     // <mark class="green">open</mark></code>
 			<code>  val bytes = message.getBytes()</code>
 			<code>  channel.basicPublish("exchange","routing.key",null,bytes)</code>
-			<code>  channel.close()                           // <mark>отключение</mark></code>
-			<code>  conn.close()                              // <mark>отключение</mark></code>
+			<code>  channel.close()                        // <mark>close</mark></code>
+			<code>  conn.close()                           // <mark>close</mark></code>
 			<code>}</code>			
 		</pre>
-		<a href="https://gist.github.com/polarnik/10dce91e372ed74ba7038250125f26a6">https://gist.github.com/polarnik / AmqpGatlingSimulation.scala</a> (<mark>v 3.1.2</mark>)
-	</div></section>
+		</section>
 
 
 
 	<section class="slide"><div>
-		<h2>Отправить AMQP-запрос без Gatling-плагина</h2>
+		<h2><a href="https://gist.github.com/polarnik/10dce91e372ed74ba7038250125f26a6">Отправить</a> AMQP-запрос без Gatling</h2>
 		<pre>
 			<code>.group("Transaction Name") {</code>
 			<code>  exec {</code>
 			<code>    session => </code>
-			<code>      val factory = new ConnectionFactory() // <mark>подключение</mark></code>
-			<code>      factory.setUsername("guest")          // <mark>подключение</mark></code>
-			<code>      ...                                   // <mark>подключение</mark></code>
+			<code>      val factory = new ConnectionFactory() // <mark class="green">open</mark></code>
+			<code>      ...                                   </code>
 
 			<code>      channel.basicPublish("exchange","routing.key",null,bytes)</code>
 
-			<code>      channel.close()                       // <mark>отключение</mark></code>
-			<code>      conn.close()                          // <mark>отключение</mark></code>
-			<code>    session.set("variableName", variableValue)  </code>                        
+			<code>      channel.close()                       // <mark>close</mark></code>
+			<code>      conn.close()                          // <mark>close</mark></code>
+			<code>    session  </code>                        
+			<code>  }</code>                      
+			<code>}</code>			
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2><a href="https://gist.github.com/polarnik/10dce91e372ed74ba7038250125f26a6">Отправить</a> AMQP-запрос без Gatling</h2>
+		<pre>
+			<code>.group("Transaction Name") {</code>
+			<code>  exec {</code>
+			<code>    session => </code>
+			<code>      val factory = new ConnectionFactory() // <mark class="green">open</mark></code>
+			<code>      ...                                   </code>
+
+			<code>      channel.basicPublish("exchange","routing.key",null,bytes)</code>
+
+			<code>      channel.close()                       // <mark>close</mark></code>
+			<code>      conn.close()                          // <mark>close</mark></code>
+			<code>    session.set("variable", variableValue)  // <mark class="green">share</mark></code>                        
 			<code>  }</code>                      
 			<code>}</code>			
 		</pre>
@@ -283,21 +494,54 @@
 			<li>пул соединений</li>
 			<li>создание/удаление очередей</li>
 			<li>отправка и получение единичных сообщений</li>
-			<li>ожидание появления сообщений</li>
 			<li>корреляция и проверки</li>
-			<li>логирование и статистика</li>
 			<li>...</li>
 		</ul>
 		</h2>
 	</div></section>
 
 	<section class="slide"><div>
-		<h2>Подходящая основа для AMQP-плагина</h2>
-		<h3>Для <mark>Gatling</mark> 3.0+</h3>
+		<h2><a href="https://github.com/polarnik/gatling-asynclog-plugin/tree/feature/minimalMavenProject">Логируем</a> гибко в Gatling</h2>
+		<pre>
+			<code>// 1. 12:00:00</code>
+			<code>asyncLog("1").start("Generate PDF Report")</code>
+			<code>// 2. 12:00:05</code>
+			<code>asyncLog("1").log()</code>
+			<code>             .label("Generate PDF Report (prepare report complete)")</code>
+			<code>// 3. 12:03:00</code>		
+			<code>asyncLog("1").stop()</code>		
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2><a href="https://github.com/polarnik/gatling-asynclog-plugin/tree/feature/minimalMavenProject">Логируем</a> удобно в Gatling</h2>
+		<pre>
+			<code>.exec(asynclog("Generate PDF Report (prepare report complete)")</code>
+      		<code>  .startTimestamp("2019-11-25 00:19:00",</code>
+      		<code>                  "yyyy-MM-dd HH:mm:ss")</code>
+      		<code>  .endTimestamp("2019-11-25 00:29:00", "yyyy-MM-dd HH:mm:ss")</code>
+      		<code>  .status(io.gatling.commons.stats.OK)</code>
+      		<code>  .responseCode("200")</code>
+    		<code>)</code>		
+		</pre>
+	</div></section>
+
+	<section class="clear yellow slide"><div>
+		<h2 class="small shout">Задачи плагина для <b>логирования</b>:<br/>
+			<ul>
+			<li>статистика внутри одного сценария</li>
+			<li>статистика для разных сценариев</li>
+		</ul>
+		</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Выбор основы AMQP-плагина</h2>
+		<h3>для <mark>Gatling</mark> 3.0+</h3>
 		<table>
 			<tr>
-				<th>JDBC-plugin (2.2)</th>
-				<td>есть документация</td>
+				<th>JDBC-plugin (3.2.1)</th>
+				<td>работает, есть <a href="https://blog.codecentric.de/en/2017/07/gatling-load-testing-part-2-extending-gatling/">инструкция по разработке</a></td>
 			</tr>
 			<tr>
 				<th>JMS-плагин (latest)</th>
@@ -309,20 +553,14 @@
 			</tr>
 			<tr>
 				<th>JMeter-плагины</th>
-				<td>наглядность, сработали</td>
+				<td>наглядность, работают</td>
 			</tr>
+			<tr class="next">
+				<th>AMQP-плагин (3.2)</th>
+				<td><mark>новый</mark>, работает</td>
+			</tr>			
 		</table>			
 	</div></section>
-
-	<section class="clear green slide"><div>
-		<h2 class="small shout">Разработанный <b>AMQP-plugin</b>:<br/>
-			<ul>
-				<li>TODO: <b>ссылка на опубликованный проект</b></li>
-				<li>TODO: <b>ссылка на документацию</b></li>
-			</ul>
-		</h2>
-	</div></section>
-
 
 
 	<section class="clear slide"><div>

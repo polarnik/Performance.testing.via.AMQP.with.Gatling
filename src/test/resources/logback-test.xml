@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%date{ISO8601}  ---  %level  ---  %thread  ---  %logger  ---  %msg%n%xException{full}</pattern>
+		</encoder>
+		<immediateFlush>false</immediateFlush>
+	</appender>
+
+	<!-- uncomment and set to DEBUG to log all failing HTTP requests -->
+	<!-- uncomment and set to TRACE to log all HTTP requests -->
+	<!--<logger name="io.gatling.http.engine.response" level="TRACE" />-->
+
+
+	<!--
+    https://logback.qos.ch/manual/appenders.html#SizeAndTimeBasedRollingPolicy
+    -->
+	<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>logs/gatling-loadtest.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<fileNamePattern>logs/gatling-loadtest-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+			<maxFileSize>10MB</maxFileSize>
+			<maxHistory>200</maxHistory>
+			<totalSizeCap>2GB</totalSizeCap>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%date{ISO8601}  ---  %level  ---  %thread  ---  %logger  ---  %msg%n%xException{full}</pattern>
+			<immediateFlush>false</immediateFlush>
+		</encoder>
+	</appender>
+
+	<appender class="ch.qos.logback.classic.AsyncAppender" name="ASYNCFILE">
+		<appender-ref ref="FILE"/>
+	</appender>
+
+	<appender class="ch.qos.logback.classic.AsyncAppender" name="ASYNCCONSOLE">
+		<appender-ref ref="CONSOLE"/>
+	</appender>
+
+	<root level="INFO">
+		<appender-ref ref="ASYNCCONSOLE" />
+	</root>
+
+	<root level="INFO">
+		<appender-ref ref="ASYNCFILE" />
+	</root>
+</configuration>
